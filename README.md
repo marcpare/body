@@ -7,3 +7,4 @@ Install
 	bash Miniconda3-latest-MacOSX-x86_64.sh
 
 	conda install bokeh
+	conda install pandas
