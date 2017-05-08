@@ -1,4 +1,9 @@
 
+Export Fitbit Data
+===
+
+http://fitbit-export.azurewebsites.net/
+
 
 Install
 ===

@@ -15,6 +15,7 @@ from bokeh.models.ranges import Range1d
 
 dateparse = lambda x: pandas.datetime.strptime(x, '%Y-%m-%d')
 strongdateparse = lambda x: pandas.datetime.strptime(x, '%Y-%m-%d %H:%M:%S')
+strongliftsdateparse = lambda x: pandas.datetime.strptime(x, '%m/%d/%y')
 
 def whitelist_columns(df, columns):
 	for column in df.columns.values:
@@ -24,6 +25,38 @@ def whitelist_columns(df, columns):
 fitbit = pandas.read_csv('data/fitbit.csv', parse_dates=['dateTime'], date_parser=dateparse)
 caliper = pandas.read_csv('data/caliper.csv', parse_dates=['date'], date_parser=dateparse)
 strong = pandas.read_csv('data/strong.csv', parse_dates=['Date'], date_parser=strongdateparse)
+
+# TODO: manually removed trailing comma on the raw data
+stronglifts = pandas.read_csv('data/stronglifts.csv', parse_dates=['Date'], date_parser=strongliftsdateparse)
+
+# print(stronglifts)
+
+unrolled_stronglifts = []
+for index, row in stronglifts.iterrows():
+	for i in range(1, 4):
+		exercise_name = 'Exercise %s' % i
+		weight_name = 'Weight (LB)'
+		suffix = ''
+		if i > 1:
+			suffix = ".%s" % (i - 1)
+		weight_name += suffix
+		for k in range(1, 6):
+			set_name = 'Set %s' % k
+			set_name += suffix
+			unrolled_stronglifts.append({
+				'Date': row['Date'],
+				'Exercise Name': row[exercise_name],
+				'Reps': row[set_name],
+				'lb': row[weight_name],
+			})
+
+stronglifts = pandas.DataFrame(unrolled_stronglifts)
+stronglifts = stronglifts.fillna(1)
+
+strong = pandas.concat([stronglifts, strong])
+
+strong['Exercise Name'] = strong['Exercise Name'].replace('Military Press', 'Overhead Press')
+print(strong)
 
 whitelist_columns(fitbit, ['dateTime', 'body-weight', 'body-fat'])
 
@@ -47,7 +80,7 @@ strong['1RM'] = strong['lb'] / (1.0278 - (0.0278 * strong['Reps']))
 
 x_range = Range1d(min_timestamp, max_timestamp)
 
-p = figure(title="Body Composition", x_axis_type='datetime', x_range=x_range)
+p = figure(title="Body Composition", x_axis_type='datetime', x_range=x_range, tools=['hover'])
 
 body_weight_rolling_avg = pandas.rolling_mean(fitbit['body-weight-lbs'], window=7)
 lean_mass_rolling_avg = pandas.rolling_mean(fitbit['lean-mass'], window=7)
@@ -68,7 +101,7 @@ p.legend.location = 'top_right'
 p.legend.background_fill_alpha = 0.25
 p.grid[0].ticker.desired_num_ticks = 15
 
-p4 = figure(title="Fat mass", x_axis_type='datetime', x_range=x_range)
+p4 = figure(title="Fat mass", x_axis_type='datetime', x_range=x_range, tools=['hover'])
 p4.circle(fitbit['dateTime'], fat_mass_rolling_avg, color='green', legend="fat mass (lbs)")
 p4.grid[0].ticker.desired_num_ticks = 15
 
@@ -82,7 +115,7 @@ p7 = figure(title="Fat Mass Lost", x_axis_type='datetime')
 p7.circle(fitbit['dateTime'], body_fat_lost_weekly_sum, color='green', legend="fat mass lost weekly sum")
 p7.grid[0].ticker.desired_num_ticks = 15
 
-lifts_to_plot = ['Bench Press', 'Military Press', 'Deadlift', 'Front Squat', 'Squat']
+lifts_to_plot = ['Bench Press', 'Overhead Press', 'Deadlift', 'Front Squat', 'Squat']
 lift_colors = ['black', 'orange', 'blue', 'red', 'green']
 
 lifts_to_plot = ['Front Squat', 'Deadlift']
@@ -98,7 +131,7 @@ p2.legend.location = 'bottom_left'
 p2.legend.background_fill_alpha = 0.25
 
 
-lifts_to_plot = ['Bench Press', 'Military Press']
+lifts_to_plot = ['Bench Press', 'Overhead Press']
 lift_colors = ['black', 'orange']
 
 p3 = figure(title="Lifts", x_axis_type='datetime', x_range=x_range)
