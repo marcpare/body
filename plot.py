@@ -86,6 +86,13 @@ lean_mass_rolling_avg = pandas.rolling_mean(fitbit['lean-mass'], window=7)
 fat_mass_rolling_avg = pandas.rolling_mean(fitbit['fat-mass'], window=7)
 bf_percent_rolling_avg = pandas.rolling_mean(fitbit['body-fat'], window=7)
 
+body_fat_smoothed = fat_mass_rolling_avg / body_weight_rolling_avg
+body_fat_delta = -1 * body_fat_smoothed.diff(-1)
+body_fat_delta_smoothed = pandas.rolling_mean(body_fat_delta, window=7)
+
+body_fat_lost = -1 * fat_mass_rolling_avg.diff(-1)
+body_fat_lost_weekly_sum = pandas.rolling_sum(body_fat_lost, window=14)
+
 p.circle(fitbit['dateTime'], body_weight_rolling_avg, color='#9999ff', legend="weight (lbs)")
 p.circle(fitbit['dateTime'], lean_mass_rolling_avg, color='pink', legend="lean mass (lbs)")
 
@@ -98,10 +105,17 @@ p.circle(caliper['date'], caliper['lean-mass'], color='red')
 
 p4 = figure(title="Fat mass", x_axis_type='datetime')
 p4.circle(fitbit['dateTime'], fat_mass_rolling_avg, color='green', legend="fat mass (lbs)")
+p4.grid[0].ticker.desired_num_ticks = 15
 
 p5 = figure(title="Body fat percent", x_axis_type='datetime')
 p5.circle(fitbit['dateTime'], bf_percent_rolling_avg, color='green', legend="body fat %")
 
+p6 = figure(title="Body fat percent delta", x_axis_type='datetime')
+p6.circle(fitbit['dateTime'], body_fat_delta_smoothed, color='green', legend="body fat percent delta")
+
+p7 = figure(title="Fat Mass Lost", x_axis_type='datetime')
+p7.circle(fitbit['dateTime'], body_fat_lost_weekly_sum, color='green', legend="fat mass lost weekly sum")
+p7.grid[0].ticker.desired_num_ticks = 15
 
 lifts_to_plot = ['Bench Press', 'Military Press', 'Deadlift', 'Front Squat', 'Squat']
 lift_colors = ['black', 'orange', 'blue', 'red', 'green']
@@ -131,4 +145,4 @@ for lift, color in zip(lifts_to_plot, lift_colors):
 p3.legend.location = 'bottom_left'
 p3.legend.background_fill_alpha = 0.25
 
-show(gridplot(p, p4, p2, p3, ncols=1, nrows=5, plot_width=800, plot_height=400))
+show(gridplot(p, p7, p6, p4, p2, p3, ncols=1, nrows=5, plot_width=800, plot_height=400))
