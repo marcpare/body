@@ -119,7 +119,7 @@ lifts_to_plot = ['Bench Press', 'Overhead Press', 'Deadlift', 'Front Squat', 'Sq
 lift_colors = ['black', 'orange', 'blue', 'red', 'green']
 
 lifts_to_plot = ['Front Squat', 'Deadlift', 'Squat']
-lift_colors = ['orange', 'black', '#c6dbef']
+lift_colors = ['orange', 'black', '#3182bd']
 
 p2 = figure(title="Lifts", x_axis_type='datetime', x_range=x_range)
 
@@ -129,6 +129,7 @@ for lift, color in zip(lifts_to_plot, lift_colors):
 
 p2.legend.location = 'bottom_left'
 p2.legend.background_fill_alpha = 0.25
+p2.grid[0].ticker.desired_num_ticks = 15
 
 
 lifts_to_plot = ['Bench Press', 'Overhead Press']
@@ -142,7 +143,7 @@ for lift, color in zip(lifts_to_plot, lift_colors):
 
 p3.legend.location = 'bottom_left'
 p3.legend.background_fill_alpha = 0.25
-
+p3.grid[0].ticker.desired_num_ticks = 15
 
 
 # Build lift of power lifting total
@@ -167,7 +168,7 @@ power_lifting_total['Total'] = power_lifting_total['Bench Press'] + power_liftin
 
 p_power_lift_total = figure(title='Powerlifting total', x_axis_type='datetime', x_range=x_range)
 p_power_lift_total.circle(power_lifting_total['Date'], power_lifting_total['Total'], color='black')
-
+p_power_lift_total.grid[0].ticker.desired_num_ticks = 15
 
 show(gridplot(p, p4, p2, p3, p_power_lift_total, ncols=1, nrows=5, plot_width=800, plot_height=400))
 
