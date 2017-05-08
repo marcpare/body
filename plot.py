@@ -3,6 +3,7 @@
 # TODO: add Back Squat to plots
 # TODO: remove outlier front squat entry
 
+import copy
 from datetime import datetime
 import csv
 import numpy as np
@@ -56,7 +57,6 @@ stronglifts = stronglifts.fillna(1)
 strong = pandas.concat([stronglifts, strong])
 
 strong['Exercise Name'] = strong['Exercise Name'].replace('Military Press', 'Overhead Press')
-print(strong)
 
 whitelist_columns(fitbit, ['dateTime', 'body-weight', 'body-fat'])
 
@@ -143,4 +143,36 @@ for lift, color in zip(lifts_to_plot, lift_colors):
 p3.legend.location = 'bottom_left'
 p3.legend.background_fill_alpha = 0.25
 
-show(gridplot(p, p4, p2, p3, ncols=1, nrows=5, plot_width=800, plot_height=400))
+
+
+# Build lift of power lifting total
+power_lifting_total = []
+maxes = {
+	'Bench Press': 0,
+	'Deadlift': 0,
+	'Squat': 0
+}
+
+for index, row in strong.iterrows():
+	for lift, current_max in maxes.items():
+		if row['Exercise Name'] == lift and row['1RM'] > current_max:
+			maxes[lift] = row['1RM']
+	total_row = copy.copy(maxes)
+	total_row['Date'] = row['Date']
+	power_lifting_total.append(total_row)
+
+power_lifting_total = pandas.DataFrame(power_lifting_total)
+
+power_lifting_total['Total'] = power_lifting_total['Bench Press'] + power_lifting_total['Deadlift'] + power_lifting_total['Squat']
+
+p_power_lift_total = figure(title='Powerlifting total', x_axis_type='datetime', x_range=x_range)
+p_power_lift_total.circle(power_lifting_total['Date'], power_lifting_total['Total'], color='black')
+
+
+show(gridplot(p, p4, p2, p3, p_power_lift_total, ncols=1, nrows=5, plot_width=800, plot_height=400))
+
+
+
+
+
+
