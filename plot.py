@@ -118,8 +118,8 @@ p7.grid[0].ticker.desired_num_ticks = 15
 lifts_to_plot = ['Bench Press', 'Overhead Press', 'Deadlift', 'Front Squat', 'Squat']
 lift_colors = ['black', 'orange', 'blue', 'red', 'green']
 
-lifts_to_plot = ['Front Squat', 'Deadlift']
-lift_colors = ['orange', 'black']
+lifts_to_plot = ['Front Squat', 'Deadlift', 'Squat']
+lift_colors = ['orange', 'black', '#c6dbef']
 
 p2 = figure(title="Lifts", x_axis_type='datetime', x_range=x_range)
 
