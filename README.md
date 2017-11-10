@@ -1,9 +1,18 @@
-
 Export Fitbit Data
 ===
 
+Updating data
+===
+
+Export data from Fitbit into `data/fitbit.csv`:
+
 http://fitbit-export.azurewebsites.net/
 
+Email data from Strong Settings into `data/strong.csv`
+
+Then,
+
+	python plot.py
 
 Install
 ===
