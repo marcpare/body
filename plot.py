@@ -156,7 +156,7 @@ maxes = {
 
 for index, row in strong.iterrows():
 	for lift, current_max in maxes.items():
-		if row['Exercise Name'] == lift and row['1RM'] > current_max:
+		if row['Exercise Name'] == lift and row['1RM'] > current_max and row['Reps'] <= 5:
 			maxes[lift] = row['1RM']
 	total_row = copy.copy(maxes)
 	total_row['Date'] = row['Date']
