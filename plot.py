@@ -78,6 +78,12 @@ caliper['lean-mass'] = caliper['weight'] - caliper['weight'] * (caliper['caliper
 
 strong['1RM'] = strong['lb'] / (1.0278 - (0.0278 * strong['Reps']))
 
+
+print(strong[strong['Reps'] > 5])
+strong.ix[strong['Reps'] > 7, '1RM'] = np.nan
+print(strong[strong['Reps'] > 5])
+
+
 x_range = Range1d(min_timestamp, max_timestamp)
 
 p = figure(title="Body Composition", x_axis_type='datetime', x_range=x_range, tools=['hover'])
