@@ -23,7 +23,7 @@ def whitelist_columns(df, columns):
 		if column not in columns:
 			df.drop(column, axis=1, inplace=True)
 
-fitbit = pandas.read_csv('data/fitbit.csv', parse_dates=['dateTime'], date_parser=dateparse)
+fitbit = pandas.read_csv('data/fitbit2.csv', parse_dates=['date'], date_parser=dateparse)
 caliper = pandas.read_csv('data/caliper.csv', parse_dates=['date'], date_parser=dateparse)
 strong = pandas.read_csv('data/strong.csv', parse_dates=['Date'], date_parser=strongdateparse)
 
@@ -58,21 +58,21 @@ strong = pandas.concat([stronglifts, strong])
 
 strong['Exercise Name'] = strong['Exercise Name'].replace('Military Press', 'Overhead Press')
 
-whitelist_columns(fitbit, ['dateTime', 'body-weight', 'body-fat'])
+whitelist_columns(fitbit, ['date', 'weight', 'fat'])
 
 # Data before this time is bad
-fitbit = fitbit[fitbit['dateTime'] > datetime(2015, 12, 28)]
+fitbit = fitbit[fitbit['date'] > datetime(2015, 12, 28)]
 
 # Add dummy data to start/end of data so that axes line up
-min_timestamp = (pandas.Series([fitbit['dateTime'].min(), caliper['date'].min(), strong['Date'].min()]).min())
-max_timestamp = (pandas.Series([fitbit['dateTime'].max(), caliper['date'].max(), strong['Date'].max()]).max())
+min_timestamp = (pandas.Series([fitbit['date'].min(), caliper['date'].min(), strong['Date'].min()]).min())
+max_timestamp = (pandas.Series([fitbit['date'].max(), caliper['date'].max(), strong['Date'].max()]).max())
 
-fitbit['body-fat'] -= 7
-fitbit['body-weight-lbs'] = fitbit['body-weight'] * 2.20462
-fitbit['lean-mass'] = fitbit['body-weight-lbs'] - fitbit['body-weight-lbs'] * (fitbit['body-fat'] / 100.0)
+fitbit['fat'] -= 7
+fitbit['body-weight-lbs'] = fitbit['weight']
+fitbit['lean-mass'] = fitbit['body-weight-lbs'] - fitbit['body-weight-lbs'] * (fitbit['fat'] / 100.0)
 fitbit['fat-mass'] = fitbit['body-weight-lbs'] - fitbit['lean-mass']
 
-fitbit['label'] = fitbit['dateTime'].apply(lambda x: x.strftime('%Y-%m-%d'))
+fitbit['label'] = fitbit['date'].apply(lambda x: x.strftime('%Y-%m-%d'))
 
 caliper['lean-mass'] = caliper['weight'] - caliper['weight'] * (caliper['caliper-body-fat'] / 100.0)
 
@@ -91,7 +91,7 @@ p = figure(title="Body Composition", x_axis_type='datetime', x_range=x_range, to
 body_weight_rolling_avg = pandas.rolling_mean(fitbit['body-weight-lbs'], window=7)
 lean_mass_rolling_avg = pandas.rolling_mean(fitbit['lean-mass'], window=7)
 fat_mass_rolling_avg = pandas.rolling_mean(fitbit['fat-mass'], window=7)
-bf_percent_rolling_avg = pandas.rolling_mean(fitbit['body-fat'], window=7)
+bf_percent_rolling_avg = pandas.rolling_mean(fitbit['fat'], window=7)
 
 body_fat_smoothed = fat_mass_rolling_avg / body_weight_rolling_avg
 body_fat_delta = -1 * body_fat_smoothed.diff(-1)
@@ -100,25 +100,25 @@ body_fat_delta_smoothed = pandas.rolling_mean(body_fat_delta, window=7)
 body_fat_lost = -1 * fat_mass_rolling_avg.diff(-1)
 body_fat_lost_weekly_sum = pandas.rolling_sum(body_fat_lost, window=14)
 
-p.circle(fitbit['dateTime'], body_weight_rolling_avg, color='blue', legend="weight (lbs)")
-p.circle(fitbit['dateTime'], lean_mass_rolling_avg, color='red', legend="lean mass (lbs)")
+p.circle(fitbit['date'], body_weight_rolling_avg, color='blue', legend="weight (lbs)")
+p.circle(fitbit['date'], lean_mass_rolling_avg, color='red', legend="lean mass (lbs)")
 
 p.legend.location = 'top_right'
 p.legend.background_fill_alpha = 0.25
 p.grid[0].ticker.desired_num_ticks = 15
 
 p4 = figure(title="Fat mass", x_axis_type='datetime', x_range=x_range, tools=['hover'])
-p4.circle(fitbit['dateTime'], fat_mass_rolling_avg, color='green', legend="fat mass (lbs)")
+p4.circle(fitbit['date'], fat_mass_rolling_avg, color='green', legend="fat mass (lbs)")
 p4.grid[0].ticker.desired_num_ticks = 15
 
 p5 = figure(title="Body fat percent", x_axis_type='datetime')
-p5.circle(fitbit['dateTime'], bf_percent_rolling_avg, color='green', legend="body fat %")
+p5.circle(fitbit['date'], bf_percent_rolling_avg, color='green', legend="body fat %")
 
 p6 = figure(title="Body fat percent delta", x_axis_type='datetime')
-p6.circle(fitbit['dateTime'], body_fat_delta_smoothed, color='green', legend="body fat percent delta")
+p6.circle(fitbit['date'], body_fat_delta_smoothed, color='green', legend="body fat percent delta")
 
 p7 = figure(title="Fat Mass Lost", x_axis_type='datetime')
-p7.circle(fitbit['dateTime'], body_fat_lost_weekly_sum, color='green', legend="fat mass lost weekly sum")
+p7.circle(fitbit['date'], body_fat_lost_weekly_sum, color='green', legend="fat mass lost weekly sum")
 p7.grid[0].ticker.desired_num_ticks = 15
 
 lifts_to_plot = ['Bench Press', 'Overhead Press', 'Deadlift', 'Front Squat', 'Squat']
