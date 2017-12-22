@@ -4,9 +4,10 @@ Export Fitbit Data
 Updating data
 ===
 
-Export data from Fitbit into `data/fitbit.csv`:
+Export data from Fitbit into `data/fitbit2.csv`:
 
-http://fitbit-export.azurewebsites.net/
+	export FITBIT_CREDENTIALS=...
+	python fitbit_export.csv
 
 Email data from Strong Settings into `data/strong.csv`
 
