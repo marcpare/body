@@ -80,7 +80,7 @@ strong['1RM'] = strong['lb'] / (1.0278 - (0.0278 * strong['Reps']))
 
 
 print(strong[strong['Reps'] > 5])
-strong.ix[strong['Reps'] > 7, '1RM'] = np.nan
+# strong.ix[strong['Reps'] > 7, '1RM'] = np.nan
 print(strong[strong['Reps'] > 5])
 
 
@@ -162,7 +162,7 @@ maxes = {
 
 for index, row in strong.iterrows():
 	for lift, current_max in maxes.items():
-		if row['Exercise Name'] == lift and row['1RM'] > current_max and row['Reps'] <= 5:
+		if row['Exercise Name'] == lift and row['1RM'] > current_max:
 			maxes[lift] = row['1RM']
 	total_row = copy.copy(maxes)
 	total_row['Date'] = row['Date']
