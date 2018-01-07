@@ -1,4 +1,3 @@
-# TODO: remove data points less than max for a given day
 # TODO: Unroll Stronglifts data, merge with Strong data
 # TODO: Mark computed 1RM in all lift data
 # TODO: remove outlier front squat entry
@@ -77,7 +76,6 @@ fitbit['label'] = fitbit['date'].apply(lambda x: x.strftime('%Y-%m-%d'))
 caliper['lean-mass'] = caliper['weight'] - caliper['weight'] * (caliper['caliper-body-fat'] / 100.0)
 
 strong['1RM'] = strong['lb'] / (1.0278 - (0.0278 * strong['Reps']))
-
 
 # Limit 1RM to sets of 7 or fewer
 # strong.ix[strong['Reps'] > 7, '1RM'] = np.nan

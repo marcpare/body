@@ -6,8 +6,9 @@ Updating data
 
 Export data from Fitbit into `data/fitbit2.csv`:
 
-	export FITBIT_CREDENTIALS=...
-	python fitbit_export.csv
+	export CLIENT_ID=...
+	export CLIENT_SECRET=... 
+	python fitbit_export.py
 
 Email data from Strong Settings into `data/strong.csv`
 
