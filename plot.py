@@ -62,6 +62,9 @@ whitelist_columns(fitbit, ['date', 'weight', 'fat'])
 # Data before this time is bad
 fitbit = fitbit[fitbit['date'] > datetime(2015, 12, 28)]
 
+# Remove any rows with zero in body fat
+fitbit = fitbit[fitbit['fat'] > 0.1]
+
 # Add dummy data to start/end of data so that axes line up
 min_timestamp = (pandas.Series([fitbit['date'].min(), caliper['date'].min(), strong['Date'].min()]).min())
 max_timestamp = (pandas.Series([fitbit['date'].max(), caliper['date'].max(), strong['Date'].max()]).max())
