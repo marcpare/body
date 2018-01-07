@@ -1,6 +1,6 @@
+# TODO: remove data points less than max for a given day
 # TODO: Unroll Stronglifts data, merge with Strong data
 # TODO: Mark computed 1RM in all lift data
-# TODO: add Back Squat to plots
 # TODO: remove outlier front squat entry
 
 import copy
@@ -79,9 +79,12 @@ caliper['lean-mass'] = caliper['weight'] - caliper['weight'] * (caliper['caliper
 strong['1RM'] = strong['lb'] / (1.0278 - (0.0278 * strong['Reps']))
 
 
-print(strong[strong['Reps'] > 5])
+# Limit 1RM to sets of 7 or fewer
 # strong.ix[strong['Reps'] > 7, '1RM'] = np.nan
-print(strong[strong['Reps'] > 5])
+
+# Only plot the top set of the day
+strong = strong.sort_values('1RM', ascending=False).drop_duplicates(['Date', 'Exercise Name'])
+strong = strong.sort_values('Date', ascending=True)
 
 
 x_range = Range1d(min_timestamp, max_timestamp)
