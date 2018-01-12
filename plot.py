@@ -125,11 +125,11 @@ p7 = figure(title="Fat Mass Lost", x_axis_type='datetime')
 p7.circle(fitbit['date'], body_fat_lost_weekly_sum, color='green', legend="fat mass lost weekly sum")
 p7.grid[0].ticker.desired_num_ticks = 15
 
-lifts_to_plot = ['Bench Press', 'Overhead Press', 'Deadlift', 'Front Squat', 'Squat']
+lifts_to_plot = ['Bench Press', 'Overhead Press', 'Deadlift', 'Squat']
 lift_colors = ['black', 'orange', 'blue', 'red', 'green']
 
-lifts_to_plot = ['Front Squat', 'Deadlift', 'Squat']
-lift_colors = ['orange', 'black', '#3182bd']
+lifts_to_plot = ['Deadlift', 'Squat']
+lift_colors = ['black', 'orange']
 
 p2 = figure(title="Lifts", x_axis_type='datetime', x_range=x_range)
 
